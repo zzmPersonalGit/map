@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>步行导航</title>
+
+
+  <script src="https://webapi.amap.com/maps?v=1.4.15&key=c40853f191bca67b1d59bd62e02f8bb4"></script>
+</head>
+<body>
+<div id="mapContainer" style="width: 100%; height: 1080px;"></div>
+<button onclick="walkingMap()">按钮</button>
+<script>
+
+  function walkingMap() {
+    var xhr = new XMLHttpRequest();
+    var url = 'http://localhost:2080/navigation?origin=116.20,39.56&destination=116.22,39.58';
+
+
+    xhr.open('GET', url, true);
+
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState === 4 && xhr.status === 200) {
+        var response = JSON.parse(xhr.responseText);
+        console.log(response);
+        // 在这里处理返回的数据
+        fun(response)
+      }
+    };
+
+    xhr.send();
+  }
+
+   function fun(navigationData) {
+     // 创建地图实例
+     var map = new AMap.Map('mapContainer', {
+       zoom: 14
+     });
+
+     var paths = navigationData.route.paths;
+
+// 提取起点和终点坐标
+     var origin = paths[0].steps[0].polyline.split(';')[0].split(',');
+     var destination = paths[0].steps[paths[0].steps.length - 1].polyline.split(';').pop().split(',');
+
+// 添加起点和终点标记
+     var originMarker = new AMap.Marker({
+       position: origin,
+       map: map,
+       icon: 'https://webapi.amap.com/theme/v1.3/markers/n/start.png',
+     });
+     var destinationMarker = new AMap.Marker({
+       position: destination,
+       map: map,
+       icon: 'https://webapi.amap.com/theme/v1.3/markers/n/end.png',
+     });
+
+     console.log(originMarker);
+     console.log(destinationMarker)
+// 创建步行导航线路
+     var pathArr = paths[0].steps.map(function(step) {
+       return step.polyline.split(';').map(function(point) {
+         return point.split(',');
+       });
+     });
+     console.log(pathArr)
+     var path = new AMap.Polyline({
+       path: [].concat.apply([], pathArr),
+       strokeColor: '#3366FF',
+       strokeWeight: 4,
+       strokeOpacity: 0.7,
+     });
+     console.log(path)
+     map.setFitView();
+     path.setMap(map);
+
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>绘制导航路线</title>
+  <style>
+    #mapContainer {
+      width: 100%;
+      height: 500px;
+    }
+  </style>
+</head>
+<body>
+<div id="mapContainer"></div>
+<script type="text/javascript">
+  window._AMapSecurityConfig = {
+    securityJsCode:'5bf57802609cf8372482970ae0bb6d52',
+  }
+</script>
+<script src="https://webapi.amap.com/maps?v=1.4.15&key=c40853f191bca67b1d59bd62e02f8bb4"></script>
+<script>
+  var origin = "116.20,39.56";
+  var destination = "116.22,39.58";
+
+  var map = new AMap.Map("mapContainer", {
+    center: [116.20, 39.56],
+    zoom: 14
+  });
+
+  var directions = new AMap.Driving({
+    map: map,
+    panel: "panel"
+  });
+
+  directions.search([origin, destination]);
+</script>
+<div id="panel"></div>
+</body>
+</html>
